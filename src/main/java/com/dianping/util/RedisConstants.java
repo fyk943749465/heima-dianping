@@ -19,4 +19,20 @@ public class RedisConstants {
      * redis 中 token 的有效期
      */
     public static final Long LOGIN_USER_TTL = 30L;
+
+    /**
+     * 商铺缓存的过期时间
+     */
+    public static final Long CACHE_SHOP_TTL = 30L;
+    /**
+     * 商铺缓存前缀
+     */
+    public static final String CACHE_SHOP_KEY = "cache:shop:";
+
+
+    public static final Long CACHE_SHOP_TYPE_TTL = 30L;
+    /**
+     * 商铺类型缓存前缀
+     */
+    public static final String CACHE_SHOP_TYPE_KEY = "cache:shop_type";
 }
