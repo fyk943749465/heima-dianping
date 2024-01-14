@@ -94,6 +94,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         // 7.4. 设置 token 的有效期
         // token 有效期是 30 分钟，如果30分钟没有用户请求，session 过期，但是如果有请求，session 应该一直续期
         stringRedisTemplate.expire(tokeKey, RedisConstants.LOGIN_USER_TTL, TimeUnit.MINUTES);
+        // 登录成功，删除验证码
+        stringRedisTemplate.opsForValue().getOperations().delete(RedisConstants.LOGIN_CODE_KEY + phone);
         return Result.ok(token);
     }
 

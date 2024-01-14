@@ -11,12 +11,22 @@ public class MvcConfig implements WebMvcConfigurer {
 
     @Resource
     private StringRedisTemplate stringRedisTemplate;
+
+    /**
+     * 这两个拦截器，需要配置先后顺序
+     * @param registry
+     */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new LoginInterceptor(stringRedisTemplate)) // 增加拦截器
+
+        registry.addInterceptor(new RefreshTokenIntercepter(stringRedisTemplate))
+                .addPathPatterns("/**")  // 拦截所有请求，也是默认的配置
+                .order(0);
+
+        registry.addInterceptor(new LoginInterceptor()) // 增加拦截器
                 .excludePathPatterns(
-                  "/user/code",
-                  "/user/login"
-                );  // 排除的路径，根据业务需求，不需要进行用户验证的路径
+                        "/user/code",
+                        "/user/login"
+                ).order(1);  // 排除的路径，根据业务需求，不需要进行用户验证的路径
     }
 }
