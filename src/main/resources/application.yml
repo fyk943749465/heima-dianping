@@ -1,0 +1,28 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: hmdp
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.10.17:3306/hmdp?useSSL=false&serverTimezone=UTC
+    username: root
+    password: thinker
+  data:
+    redis:
+      host: 192.168.10.17
+      port: 6379
+      password: thinker
+      lettuce:
+        pool:
+          max-active: 10
+          max-idle: 10
+          min-idle: 1
+          time-between-eviction-runs: 10s
+  jackson:
+    default-property-inclusion: non_null # JSON?????????
+mybatis-plus:
+  type-aliases-package: com.dianping.entity # ?????
+logging:
+  level:
+    com.hmdp: debug
