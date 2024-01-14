@@ -1,14 +1,28 @@
 package com.dianping.config;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.StrUtil;
 import com.dianping.dto.UserDTO;
 import com.dianping.entity.User;
+import com.dianping.util.RedisConstants;
 import com.dianping.util.UserHolder;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.servlet.HandlerInterceptor;
+
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 public class LoginInterceptor implements HandlerInterceptor {
 
+
+    private StringRedisTemplate stringRedisTemplate;
+
+    public LoginInterceptor(StringRedisTemplate redisTemplate) {
+        stringRedisTemplate = redisTemplate;
+    }
     /**
      * 请求之前拦截
      * @param request
@@ -20,19 +34,28 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
-        // 1. 获取 session
-        HttpSession session = request.getSession();
-        // 2. 获取 session 中的用户
-        Object user = session.getAttribute("user");
+        // 1. 获取 请求头中的 token
+        String token = request.getHeader("authorization");
+        if (StrUtil.isBlank(token)) {
+            response.setStatus(401);
+            return false;
+        }
+        String key = RedisConstants.LOGIN_USER_KEY + token;
+        // 2. 获取 redis 中的用户
+        Map<Object, Object> userMap = stringRedisTemplate.opsForHash().entries(key);
         // 3. 判断用户是否存在
-        if (user == null) {
+        if (userMap.isEmpty()) {
             // 4. 不存在，拦截
             response.setStatus(401);
             return false;
         }
+        //4. 将查询到的 Hash 数据，转换为 UserDTO 对象
+        UserDTO user = BeanUtil.fillBeanWithMap(userMap, new UserDTO(), false);
         // 5. 存在，保存用户信息到 ThreadLocal中
-        UserHolder.saveUser((UserDTO) user);
-        // 6. 放行
+        UserHolder.saveUser(user);
+        // 6. 刷新 token 有效期
+        stringRedisTemplate.expire(key, RedisConstants.LOGIN_USER_TTL, TimeUnit.MINUTES);
+        // 7. 放行
         return true;
     }
 
