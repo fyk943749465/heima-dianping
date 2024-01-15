@@ -21,6 +21,11 @@ public class RedisConstants {
     public static final Long LOGIN_USER_TTL = 30L;
 
     /**
+     * 将空值的缓存时间设置的比较短一些
+     */
+    public static final Long CACHE_NULL_TTL = 2L;
+
+    /**
      * 商铺缓存的过期时间
      */
     public static final Long CACHE_SHOP_TTL = 30L;
@@ -35,4 +40,9 @@ public class RedisConstants {
      * 商铺类型缓存前缀
      */
     public static final String CACHE_SHOP_TYPE_KEY = "cache:shop_type";
+
+    /**
+     * 商铺锁前缀
+     */
+    public static final String SHOP_LOCK_PRFIX = "lock:shop:";
 }

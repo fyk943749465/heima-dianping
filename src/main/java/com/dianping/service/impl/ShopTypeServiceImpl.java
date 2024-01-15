@@ -1,7 +1,5 @@
 package com.dianping.service.impl;
 
-import cn.hutool.core.collection.ListUtil;
-import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.dianping.dto.Result;
@@ -9,12 +7,9 @@ import com.dianping.entity.ShopType;
 import com.dianping.mapper.ShopTypeMapper;
 import com.dianping.service.IShopTypeService;
 import com.dianping.util.RedisConstants;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Resource;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,8 +31,9 @@ public class ShopTypeServiceImpl extends ServiceImpl<ShopTypeMapper, ShopType> i
         String jsonShopTypes = redisTemplate.opsForValue().get(key);
         if (jsonShopTypes != null) {
 
-            JSONArray shopTypeArray = JSONUtil.parseArray(jsonShopTypes);
-            List<ShopType> shopTypes = shopTypeArray.toList(ShopType.class);
+            List<ShopType> shopTypes = JSONUtil.toList(jsonShopTypes, ShopType.class);
+//            JSONArray shopTypeArray = JSONUtil.parseArray(jsonShopTypes);
+//            List<ShopType> shopTypes = shopTypeArray.toList(ShopType.class);
             return Result.ok(shopTypes);
         }
         // 2. 缓存不存在，查询数据库

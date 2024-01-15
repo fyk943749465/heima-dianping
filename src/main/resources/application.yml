@@ -20,9 +20,11 @@ spring:
           min-idle: 1
           time-between-eviction-runs: 10s
   jackson:
-    default-property-inclusion: non_null # JSON?????????
+    default-property-inclusion: non_null
 mybatis-plus:
-  type-aliases-package: com.dianping.entity # ?????
+  type-aliases-package: com.dianping.entity
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 logging:
   level:
     com.hmdp: debug

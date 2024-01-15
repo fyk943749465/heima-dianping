@@ -8,19 +8,17 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.dianping.dto.LoginFormDTO;
 import com.dianping.dto.Result;
 import com.dianping.dto.UserDTO;
+import com.dianping.entity.User;
+import com.dianping.mapper.UserMapper;
+import com.dianping.service.IUserService;
 import com.dianping.util.RedisConstants;
 import com.dianping.util.RegexUtils;
 import com.dianping.util.SystemConstants;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.cache.CacheProperties;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
-
-import com.dianping.mapper.UserMapper;
-import com.dianping.entity.User;
-import com.dianping.service.IUserService;
 
 import java.util.HashMap;
 import java.util.Map;
