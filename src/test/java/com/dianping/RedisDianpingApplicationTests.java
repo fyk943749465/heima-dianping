@@ -3,7 +3,10 @@ package com.dianping;
 import com.dianping.service.impl.ShopServiceImpl;
 import com.dianping.util.RedisIDWorker;
 import jakarta.annotation.Resource;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.concurrent.CountDownLatch;
@@ -24,6 +27,26 @@ class RedisDianpingApplicationTests {
     private RedisIDWorker redisIDWorker;
 
     private ExecutorService executorService = Executors.newFixedThreadPool(300);
+
+
+    @Resource
+    private RedissonClient redissonClient;
+
+    @Resource
+    private RedissonClient redissonClient2;
+
+    @Resource
+    private RedissonClient redissonClient3;
+
+    private RLock lock;
+    @BeforeEach
+    void setUp() {
+        RLock lock1 = redissonClient.getLock("order");
+        RLock lock2 = redissonClient2.getLock("order");
+        RLock lock3 = redissonClient3.getLock("order");
+        // 创建联锁
+        lock = redissonClient.getMultiLock(lock1, lock2, lock3);
+    }
 
     @Test
     void testSaveShop() throws InterruptedException {
