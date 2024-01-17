@@ -14,6 +14,8 @@ import com.dianping.util.SimpleRedisLock;
 import com.dianping.util.UserHolder;
 import jakarta.annotation.Resource;
 import lombok.Synchronized;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.aop.framework.AopProxy;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -33,6 +35,9 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
 
     @Resource
     private StringRedisTemplate stringRedisTemplate;
+
+    @Resource
+    private RedissonClient redissonClient;
 
     @Override
     public Result seckillVoucher(Long voucherId) {
@@ -59,9 +64,15 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
 
         // synchronized(userId.toString().intern()) {  //  synchronized 加锁，没办法进程间加锁，多个实例的情况下，就会有并发安全问题
 
-        SimpleRedisLock lock = new SimpleRedisLock("order:" + userId, stringRedisTemplate);
+        // 自己实现的锁
+        // SimpleRedisLock lock = new SimpleRedisLock("order:" + userId, stringRedisTemplate);
 
-        boolean isLock = lock.tryLock(200);
+        // boolean isLock = lock.tryLock(200);
+
+        // 使用 redisson 框架提供的锁
+        RLock lock = redissonClient.getLock("lock:order:" + userId);
+
+        boolean isLock = lock.tryLock(); // 默认的参数是不重试，等待30秒超时释放锁
 
         if (!isLock) {
             // 获取锁失败
