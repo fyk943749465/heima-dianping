@@ -45,4 +45,10 @@ public class RedisConstants {
      * 商铺锁前缀
      */
     public static final String SHOP_LOCK_PRFIX = "lock:shop:";
+
+
+    /**
+     * 秒杀业务的库存key前缀
+     */
+    public static final String SECKILL_STOCK_KEY = "seckill:stock:";
 }
