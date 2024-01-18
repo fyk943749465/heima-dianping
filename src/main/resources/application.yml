@@ -28,3 +28,7 @@ mybatis-plus:
 logging:
   level:
     com.hmdp: debug
+
+redis:
+  group:
+    consumer: c1
